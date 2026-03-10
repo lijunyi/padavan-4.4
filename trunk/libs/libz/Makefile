@@ -1,13 +1,7 @@
-SRC_NAME=zlib-1.2.11
-SRC_URL=http://www.zlib.net/$(SRC_NAME).tar.gz
+SRC_NAME=zlib-1.3.1
 
-all: download_test extract_test config_test
+all: extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
-
-download_test:
-	( if [ ! -f $(SRC_NAME).tar.gz ]; then \
-		wget -t5 --timeout=20 --no-check-certificate -O $(SRC_NAME).tar.gz $(SRC_URL); \
-	fi )
 
 extract_test:
 	( if [ ! -d $(SRC_NAME) ]; then \
