@@ -1,18 +1,29 @@
-SRC_NAME=dropbear-202X.XX
+SRC_NAME=dropbear-2024.86
+
+ifeq ($(CONFIG_FIRMWARE_INCLUDE_DROPBEAR_FAST_CODE),y)
+COPT=-DDROPBEAR_SMALL_CODE=0
+else
+COPT=-DDROPBEAR_SMALL_CODE=1
+endif
 
 ifeq ($(CONFIG_FIRMWARE_INCLUDE_SFTP),y)
-COPT=-DSFTPSERVER_PATH=\"/usr/libexec/sftp-server\"
+COPT+=-DSFTPSERVER_PATH=\"/usr/libexec/sftp-server\"
 else
-COPT=-DSFTPSERVER_PATH=\"/opt/libexec/sftp-server\"
-endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_DROPBEAR_FAST_CODE),y)
-COPT+=-DDROPBEAR_SMALL_CODE
+COPT+=-DSFTPSERVER_PATH=\"/opt/libexec/sftp-server\"
 endif
 CFLAGS+=$(COPT) -ffunction-sections -fdata-sections
 LDFLAGS += -Wl,--gc-sections
 
-all: config_test
+all: extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME) PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp" MULTI=1
+
+extract_test:
+	( if [ ! -d $(SRC_NAME) ]; then \
+		tar xjf $(SRC_NAME).tar.bz2; \
+		if [ -f localoptions.h ]; then \
+			cp localoptions.h $(SRC_NAME)/localoptions.h; \
+		fi; \
+	fi )
 
 config_test:
 	( if [ -f ./config_done ]; then \
