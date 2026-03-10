@@ -1,18 +1,12 @@
-SRC_NAME = socat-1.7.3.3
-SRC_URL = http://www.dest-unreach.org/socat/download/socat-1.7.3.3.tar.bz2
+SRC_NAME = socat-1.8.0.1
 THISDIR = $(shell pwd)
 
-all: download_test extract_test config_test
+all: extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
-
-download_test:
-	( if [ ! -f $(SRC_NAME).tar.bz2 ]; then \
-		wget -t5 --timeout=20 --no-check-certificate -O $(SRC_NAME).tar.gz $(SRC_URL); \
-	fi )
 
 extract_test:
 	( if [ ! -d $(SRC_NAME) ]; then \
-		tar xf $(SRC_NAME).tar.bz2; \
+		tar xf $(SRC_NAME).tar.gz; \
 	fi )
 
 config_test:
