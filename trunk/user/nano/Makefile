@@ -1,18 +1,12 @@
-SRC_NAME = nano-3.0
-SRC_URL = https://www.nano-editor.org/dist/v3/nano-3.0.tar.gz
+SRC_NAME = nano-8.0
 THISDIR = $(shell pwd)
 
-all: download_test extract_test config_test
+all: extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
-
-download_test:
-	( if [ ! -f $(SRC_NAME).tar.gz ]; then \
-		wget -t5 --timeout=20 --no-check-certificate -O $(SRC_NAME).tar.gz $(SRC_URL); \
-	fi )
 
 extract_test:
 	( if [ ! -d $(SRC_NAME) ]; then \
-		tar -xf $(SRC_NAME).tar.gz; \
+		tar -xJf $(SRC_NAME).tar.xz; \
 	fi )
 
 config_test:
@@ -29,7 +23,6 @@ configure:
 		--enable-tiny \
 		--enable-utf8 \
 		--disable-nls \
-		PKG_CONFIG_LIBDIR="$(STAGEDIR)/lib/pkgconfig/" \
 		--host=$(HOST_TARGET) \
 		--build=$(HOST_BUILD) ; \
 	)
