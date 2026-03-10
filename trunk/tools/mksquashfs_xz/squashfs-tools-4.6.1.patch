@@ -1,0 +1,34 @@
+--- squashfs-tools-4.6.1/squashfs-tools/Makefile	2023-03-25 21:00:00.000000000 +0800
++++ squashfs-tools-4.6.1/squashfs-tools/Makefile.new	2026-03-10 11:30:00.000000000 +0800
+@@ -34,7 +34,7 @@
+ #
+ # To build install the library and uncomment
+ # the XZ_SUPPORT line below.
+-#XZ_SUPPORT = 1
++XZ_SUPPORT = 1
+ 
+ 
+ ############ Building LZO support ##############
+@@ -91,7 +91,7 @@
+ # in Mksquashfs.  Obviously the compression algorithm must have been
+ # selected to be built
+ #
+-COMP_DEFAULT = gzip
++COMP_DEFAULT = xz
+ 
+ 
+ ###############################################
+@@ -330,6 +330,13 @@
+ endif
+ 
+ ifeq ($(XZ_SUPPORT),1)
++ifdef XZUTILSDIR
++INCLUDEDIR += -I$(XZUTILSDIR)/src/liblzma/api
++XZ_LIBDIR = -L$(XZUTILSDIR)/src/liblzma/.libs
++LIBS += $(XZUTILSDIR)/src/liblzma/.libs/liblzma.a
++else
++LIBS += -llzma
++endif
+ CFLAGS += -DXZ_SUPPORT
+ MKSQUASHFS_OBJS += xz_wrapper.o
+ UNSQUASHFS_OBJS += xz_wrapper.o

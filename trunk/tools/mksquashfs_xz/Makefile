@@ -1,7 +1,18 @@
-SRC_NAME1=squashfs-4.3
-SRC_NAME2=xz-5.2.4
+SRC_NAME1=squashfs-tools-4.6.1
+SRC_NAME2=xz-5.4.6
 
-all: config_xz build_xz build_squashfs
+all: extract_test config_xz build_xz build_squashfs
+
+extract_test:
+	( if [ ! -d $(SRC_NAME1) ]; then \
+		tar -xzf $(SRC_NAME1).tar.gz; \
+		if [ -f $(SRC_NAME1).patch ]; then \
+			patch -p0 < $(SRC_NAME1).patch; \
+		fi; \
+	fi )
+	( if [ ! -d $(SRC_NAME2) ]; then \
+		tar -xzf $(SRC_NAME2).tar.gz; \
+	fi )
 
 config_xz:
 	( if [ -f ./config_xz_done ]; then \
@@ -12,7 +23,6 @@ config_xz:
 
 configure_xz:
 	( cd $(SRC_NAME2) ; \
-	./autogen.sh ; \
 	./configure \
 		--disable-shared \
 		--disable-werror \
@@ -27,14 +37,16 @@ build_xz:
 	make -C $(SRC_NAME2)
 
 build_squashfs:
-	make -j$(HOST_NCPU) -C $(SRC_NAME1) XZUTILSDIR=$(shell pwd)/$(SRC_NAME2) ; \
-	cp $(SRC_NAME1)/mksquashfs ./
-	cp $(SRC_NAME1)/unsquashfs ./
+	make -j$(HOST_NCPU) -C $(SRC_NAME1)/squashfs-tools XZUTILSDIR=$(shell pwd)/$(SRC_NAME2) ; \
+	cp $(SRC_NAME1)/squashfs-tools/mksquashfs ./
+	cp $(SRC_NAME1)/squashfs-tools/unsquashfs ./
 
 clean:
 	if [ -f $(SRC_NAME2)/Makefile ] ; then \
 		make -C $(SRC_NAME2) distclean ; \
 	fi
-	make -C $(SRC_NAME1) clean
+	if [ -d $(SRC_NAME1)/squashfs-tools ] ; then \
+		make -C $(SRC_NAME1)/squashfs-tools clean ; \
+	fi
 	rm -f config_xz_done
 	rm -f mksquashfs unsquashfs
