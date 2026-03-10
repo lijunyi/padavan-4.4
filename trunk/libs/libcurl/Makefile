@@ -1,20 +1,16 @@
-SRC_NAME=curl-7.75.0
-SRC_URL=https://github.com/curl/curl/releases/download/curl-7_75_0/curl-7.75.0.tar.xz
+SRC_NAME=curl-8.7.1
 
 LDFLAGS += -Wl,-rpath-link=$(STAGEDIR)/lib
 
-all: download_test extract_test config_test
+all: extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
-
-download_test:
-	( if [ ! -f $(SRC_NAME).tar.xz ]; then \
-		wget -t5 --timeout=20 --no-check-certificate -O $(SRC_NAME).tar.xz $(SRC_URL); \
-	fi )
 
 extract_test:
 	( if [ ! -d $(SRC_NAME) ]; then \
 		tar xf $(SRC_NAME).tar.xz; \
-		patch -d $(SRC_NAME) -p1 -i ../no_docs_test.patch; \
+		-patch -d $(SRC_NAME) -p1 -i ../no_docs_test.patch; \
+		sed -i 's/SUBDIRS = lib src tests packages scripts include docs/SUBDIRS = lib src packages include/g' $(SRC_NAME)/Makefile.in; \
+		sed -i 's/DIST_SUBDIRS = $(SUBDIRS) tests packages scripts include docs/DIST_SUBDIRS = $(SUBDIRS) packages include/g' $(SRC_NAME)/Makefile.in; \
 	fi )
 
 config_test:
@@ -52,7 +48,8 @@ configure:
 		--disable-threaded-resolver \
 		--without-gnutls \
 		--without-ca-bundle \
-		--without-libidn \
+		--without-libidn2 \
+		--without-libpsl \
 		--without-libssh2 \
 		--without-krb4 \
 		--without-nss \
