@@ -1,10 +1,18 @@
-SRC_NAME=ipset-7.11
+SRC_NAME=ipset-7.23
 
 THISDIR = $(shell pwd)
 
-all: config_test
+all: extract_test config_test
 	$(MAKE) -C $(SRC_NAME)
 	$(MAKE) modules -C $(SRC_NAME)
+
+extract_test:
+	( if [ ! -d $(SRC_NAME) ]; then \
+		tar xjf $(SRC_NAME).tar.bz2; \
+		if [ -f fix-configure-strscpy.patch ]; then \
+			patch -d $(SRC_NAME) -p1 < fix-configure-strscpy.patch; \
+		fi; \
+	fi )
 
 config_test:
 	( if [ -f ./config_done ]; then \
@@ -38,4 +46,3 @@ clean:
 
 romfs:
 	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/src/ipset /sbin/ipset
-

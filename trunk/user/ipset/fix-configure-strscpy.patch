@@ -1,0 +1,35 @@
+--- temp_orig/configure.ac	2024-12-17 02:12:56.000000000 +0800
++++ ipset-7.23/configure.ac	2026-03-10 11:22:40.652614694 +0800
+@@ -757,22 +757,22 @@
+ 
+ AC_MSG_CHECKING([kernel source for strscpy() in string.h])
+ if test -f $ksourcedir/include/linux/timer.h && \
+-   $GREP -q ' strscpy' $ksourcedir/include/linux/string.h; then
+-	AC_MSG_RESULT(yes)
+-	AC_SUBST(HAVE_STRSCPY, define)
++   $GREP -q 'strscpy' $ksourcedir/include/linux/string.h; then
++        AC_MSG_RESULT(yes)
++        AC_SUBST(HAVE_STRSCPY, define)
+ else
+-	AC_MSG_RESULT(no)
+-	AC_SUBST(HAVE_STRSCPY, undef)
++        AC_MSG_RESULT(no)
++        AC_SUBST(HAVE_STRSCPY, undef)
+ fi
+ 
+ AC_MSG_CHECKING([kernel source for strscpy_pad() in string.h])
+ if test -f $ksourcedir/include/linux/timer.h && \
+-   $GREP -q ' strscpy_pad' $ksourcedir/include/linux/string.h; then
+-	AC_MSG_RESULT(yes)
+-	AC_SUBST(HAVE_STRSCPY_PAD, define)
++   $GREP -q 'strscpy_pad' $ksourcedir/include/linux/string.h; then
++        AC_MSG_RESULT(yes)
++        AC_SUBST(HAVE_STRSCPY_PAD, define)
+ else
+-	AC_MSG_RESULT(no)
+-	AC_SUBST(HAVE_STRSCPY, undef)
++        AC_MSG_RESULT(no)
++        AC_SUBST(HAVE_STRSCPY_PAD, undef)
+ fi
+ 
+ AC_MSG_CHECKING([kernel source for synchronize_rcu_bh() in rcutiny.h and rcupdate.h])
